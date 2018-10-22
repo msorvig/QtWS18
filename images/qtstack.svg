@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns="http://www.w3.org/2000/svg"
+    width="400pt"
+    height="700pt"
+    viewBox="-10 0 200 400"
+    version="1.1">
+   
+    <style>
+    .qttextdark1 { font: 13px sans-serif; fill: rgb(9, 16,43) }
+    .qttextdark2 { font: 13px sans-serif; fill: rgb(243, 243, 244) }
+    .qttextlight1 { font: 13px sans-serif; fill: rgb(255, 255, 255) }
+    .qttextlight2 { font: 13px sans-serif; fill: rgb(58, 64, 85) }
+    .qtaccent1 { fill: rgb(65, 205, 82) }
+    .qtaccent2 { fill: rgb(132, 136, 149) }
+    .qtaccent3 { fill: rgb(83, 88, 107) }
+    .qtaccent4 { fill: rgb(23, 168, 26) }
+    .qtaccent5 { fill: rgb(34, 40, 64) }
+    .qtaccent6 { fill: rgb(181, 183, 191) }
+    .qthyperlink { fill: rgb(58, 64, 85) }
+    .qthyperlinkfollowed { fill: rgb(65, 205, 82) }
+
+    </style>
+   
+    <path
+        class="qtaccent5"
+        d=" M 10 0
+            L 170 0
+            L 170 40
+            L 160 50
+            L 0 50
+            L 0 10
+            Z"
+    />
+    <text x="30" y="30" class="qttextlight1">Application</text>
+
+    <path
+        class="qtaccent1"
+        d=" M 10 50
+            L 170 50
+            L 170 90
+            L 160 100
+            L 0 100
+            L 0 60
+            Z"
+    />
+     <text x="30" y="80" class="qttextlight1">Qt</text>
+
+    <path
+        class="qtaccent2"
+        d=" M 10 100
+            L 170 100
+            L 170 140
+            L 160 150
+            L 0 150
+            L 0 110
+            Z"
+    />
+     <text x="30" y="130" class="qttextlight1">Emscripten</text>
+
+    <path
+        class="qtaccent3"
+        d=" M 10 150
+            L 170 150
+            L 170 190
+            L 160 200
+            L 0 200
+            L 0 160
+            Z"
+    />
+     <text x="30" y="180" class="qttextlight1">HTML/Wasm</text>
+
+
+ </svg>

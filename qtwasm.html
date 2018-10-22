@@ -1,0 +1,397 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Qt for Wasm</title>
+
+		<link rel="stylesheet" href="reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="reveal.js/css/theme/white.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+                    <img width=150 height=75 src="images/qtlogo.svg">
+                    <h2>Qt for WebAssembly</h2>
+                    <img width=300 height=300 src="images/qtws18.png">
+                    <p>morten.sorvig@qt.io <p/>
+                </section>
+                <section>
+                    <h2>Qt for WebAssembly</h2>
+                    <iframe width="300" height="300" src = "qt/gui_opengl/gui_opengl.html"></iframe>    
+                    <iframe width="300" height="300" src = "qt/widgets_wiggly/widgets_wiggly.html"></iframe>    
+                    <iframe width="600" height="300" src = "qt/quick_clocks/quick_clocks.html"></iframe>  
+                </section>
+                <section>
+                    <section>
+                        <h2>Qt for Web Browsers</h2>
+                        <p>(The story so far)</p>
+                        <p><strike>Qt for Google Native Client</strike></p>
+                        <p>QmlWeb</p>
+                        <p>Qt WebGL Streaming</p>
+                        <p>Qt for WebAssembly</p>
+                    </section>
+                    <section>
+                        <h2>QMLWeb</h2>
+                        <iframe width="1000" height="600" src="https://qmlweb.github.io"></iframe>
+                    </section>
+                </section>
+                <section>
+                    <h2>Agenda</h2>
+                    <p>Introduction to WebAssembly and Emscripten</p>
+                    <p>Building for WebAssembly</p>
+                    <p>Qt applications as a &lt;canvas&gt;</p>
+                    <p>Local File Access</p>
+                    <p>Networking</p>
+                    <p>JavaScript and C++ Interop</p>
+                </section>
+                <section>
+                    <h2>Platform Stack</h2>
+                    <img src="images/qtstack.svg" style="display:block;margin:0 auto;">
+                </section>
+                <section>
+                    <section>
+                        <h2>WebAssembly</h2>
+                        <iframe width="1000" height="600" src="https://webassembly.org"></iframe>
+                    </section>
+                    <section>
+                        <h2>WebAssembly</h2>
+                        <p>webassembly.org</p>
+                        <p>"WebAssembly is a binary instruction format for virtual machine"</p>
+                        <p>Works with the following browsers:</p>
+                        <p>Desktop: Chrome, Edge, Firefox, Safari.</p>
+                        <p>Mobile: Chrome on Android, Safari on iOS<sup>*</sup></p>
+                        <br>
+                        <p>(Mobile Safari curently has limited support for large wasm files)</p>
+                        <p></p>
+                    </section>
+                    <section>
+                        <h2>WebassAembly</h2>
+                        <p>Wasm <i>modules</i> are distributed as .wasm files.</p>
+                        <p>Wasm modules are <i>compiled</i> then <i>instantiated</i>.</p>
+                        <p>Wasm modules may export and import functions.</p>
+                        <p>Wasm heap memory is accesible from JacaScript as an ArrayBuffer </p>
+                        <p></p>
+                    </section>
+                    <section>
+                        <h2>Webassembly</h2>
+                        <pre class="fragment"><code class="hljs" data-trim contenteditable>
+wasm-bytes = await Fetch(...)
+let module = await WebAssembly.compile(wasm-bytes)
+
+let importObject = ... // environment with attached 
+                       // memory or import functions
+let instance = await WebAssembly.instantiate(module, importObject)
+                        </code></pre>                    
+                        <pre class="fragment"><code class="hljs" data-trim contenteditable>
+let source = Fetch(...)
+let importObject = ...
+let instance = await WebAssembly.
+    instantiateStreaming(source, importObject)
+                        </code></pre>                    
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>Emscripten</h2>
+                        <iframe width="1000" height="600" src="http://kripken.github.io/emscripten-site/"></iframe>
+                    </section>
+                    <section>
+                        <h2>Emscripten</h2>
+                        <p>emscripten.org</p>
+                        <p>"Emscripten is a toolchain for compiling to WebAssembly, built using LLVM, that lets you run C and C++ on the web."</p>
+                        <p>Provides a toolchain for compiling to WebAssembly, based on llvm</p>
+                        <p>Provides the runtime: Standard C and C++ libraries, html5.h, C++ <-> JavaScript interop</p>
+                    </section>
+                    <section>
+                        <h2>Emscripten</h2>
+                        <p>Compiler: emcc</p>
+                        <p>emcc main.cpp -o main.js</p>
+                           main.wasm: wasm code <br>
+                           main.js: emscripten runtime and API<br>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>Qt</h2>
+                        <p>New platform for 5.12: Q_OS_WASM</p>
+                        <p>License: GPLv3 and Commercial/Tech Preview</p>
+                        <p>Host system support: GNU/Linux, macOS, Windows Subsystem for Linux</p>
+                    </section>
+                </section>
+                <section>
+                        <h2>Build Qt from source</p>
+                        <img width=650 src="images/qtmaintenancetoolsources.png">
+                </section>
+                <section>
+                        <h2>Build Qt from source</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+$ ~/Qt/qt-5.12/configure -xplatform wasm-emscripten
+$ make</code></pre>
+                        <p>Implicit configure flags: -static -no-feature-thread</p>
+                        <p>Suppored Modules: QtBase, QtDeclarative, QQuickControls2, QtCharts, QtWebSockets, ++</p>
+                        <p>Not Supported: QtMultimedia, QtWebEngine</p>
+                </section>
+                <section>
+                    <h2>The fine print</h2>
+                    <p>No nested event loop support (QEventLoop::exec())</p>
+                    <p>No system font support (bring your own fonts)</p>
+                    <p>No accessibility/screen reader support</p>
+                    <p>No system cliboard support</p>
+                    <p>No virtual keyboard support on Mobile</p>
+                    <p></p>
+                </section>
+                <section>
+                    <h2>Build Application</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+$ /path/to/qtbase-wasm/bin/qmake
+$ make</code></pre>
+                    <p>Will produce .wasm, .js and .html files</p>
+                    <p>These can be served from any web server</p>
+                </section>
+                <section>
+                    <h2>Build Output Files</h2>
+                    <table>
+				    <thead>
+						<tr>
+							<th>Name</th>
+							<th>Owner</th>
+                            <th>Purpose</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr style>
+							<td>app.html</td>
+							<td>Qt</td>
+							<td>HTML container</td>
+						</tr>
+						<tr>
+							<td>qtloader.js</td>
+							<td>Qt</td>
+                            <td>JS API for loading Qt apps</td>
+						</tr>
+						<tr>
+							<td>app.js</td>
+                            <td>emscripten</td>
+							<td>app runtime and JS API</td>
+						</tr>
+						<tr>
+							<td>app.wasm</td>
+                            <td>emscripten</td>
+							<td>app binary</td>
+						</tr>
+					</tbody>
+				    </table>
+                </section>
+                <section>
+                    <h2>Wasm Binary Size</h2>
+                    <p>(compressed)</p>
+    				<table>
+    				    <thead>
+    						<tr>
+    							<th>Modules</th>
+    							<th>gzip</th>
+                                <th>brotli</th>
+    						</tr>
+    					</thead>
+    					<tbody>
+    						<tr>
+    							<td>Core Gui</td>
+    							<td>2.8MB</td>
+                                <td>2.1MB</td>
+    						</tr>
+    						<tr>
+    							<td>Core Gui Widgets</td>
+    							<td>4.3MB</td>
+                                <td>3.2MB</td>
+    						</tr>
+    						<tr>
+    							<td>Core Gui Widgets Quick Charts</td>
+    							<td>8.6MB</td>
+    							<td>6.3MB</td>
+    						</tr>
+    					</tbody>
+                    </table>
+				</section>
+                <section>
+                <section>
+                    <h2>Application as &lt;canvas&gt;</h2>
+                    <p> The application is embedded in the html page as a canvas element</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+&lt;div&gt;
+    &lt;canvas&gt;
+        &lt;!--- App Appears Here --&gt;
+    &lt;/canvas&gt;
+&lt;/div&gt;</code></pre>
+                    <p>The html file controls cavas position and size<p/>
+                    <p>The application sees a QScreen with geometry matching that of the canvas<p/>
+                </section>
+                <section>
+                    <h2>qtloader.js</h2>
+                    <pre>
+var qtLoader = QtLoader()
+qtLoader.loadEmscriptenModule("app") // loads app.js and app.wasm </pre>
+                </section>
+                </section>
+                <section>
+                    <h2>Demo: Slate</h2>
+                    <img src="images/slate-icon-web.svg" style="display:block;margin:0 auto;">
+                    <a href="https://github.com/mitchcurtis/slate" target="_blank">Slate - Pixel Art Editor</a>
+                    <p>Image editor made with Qt Quick Controls 2<p/>
+                </section>
+                <section>
+                    <iframe width="900" height="600" src = "qt/slate/app/slate.html"></iframe>
+                    <br><small><small>Also, <a href=qt/slate/app/slate.html target="_blank">full viewport</a></small></small></br>
+                </section>
+
+                <section>
+                    <h2>Local File Access</h2>
+                        <p>Sandbox prevents direct file system access</p>
+                        <p>Emscripten creates an in-memory file system, accessible by QFile</p>
+                        <p>HTML has API for opening a file dialog and triggering file dialog<p>
+                        <p>Not Compatible with QFileDialog - New API is needed<p>
+                        <p><p>
+                </section>
+                <section>
+                    <h2>Local File Access</h2>
+                    <p>Callback-based loadFile()</p>
+					<pre><code class="hljs" data-trim contenteditable>
+QWasmFile::loadFile("*.txt",
+    [](const QByteArray &fileContent,
+       const QString &fileName) {
+
+       qDebug() << "Got" << fileContent.count()
+                << "bytes from" << fileName;
+});
+</code></pre>                    
+                    <p>Fire-and-forget saveFile()</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+QByteArray content = ...;
+QString fileNameHint = ...;
+QWasmFile::saveFile(content, fileNameHint);
+                    </code></pre>                    
+                </section>
+                <section>
+                    <iframe width="900" height="600" src = "qt/slate/app/slate.html"></iframe>
+                </section>
+
+                <section>
+                    <h2>Networking</h2>
+    				<table>
+    				    <thead>
+    						<tr>
+    							<th>API</th>
+    							<th>Protocol</th>
+                                <th>Notes</th>
+    						</tr>
+    					</thead>
+    					<tbody>
+    						<tr>
+    							<td>QNetworkAccessManager</td>
+    							<td>Http</td>
+                                <td>Same Origin</td>
+    						</tr>
+    						<tr>
+    							<td>QWebSocket</td>
+    							<td>WebSocket</td>
+                                <td>Any host</td>
+    						</tr>
+    						<tr>
+    							<td>QAbstractSocket</td>
+    							<td>WebSocket</td>
+                                <td>Websockify forwarding host</td>
+    						</tr>
+    					</tbody>
+    				    </table>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>MQTT over WebSocket</h2>
+                    <iframe width="700" height="600" src="qt/mqtt_simpleclient/mqtt_simpleclient.html"></iframe>    
+                </section>
+
+                <section>
+                    <h2>JavaScript and C++ Interop</h2>
+                    <p>Use case: The applicaiton is a web page component</p>
+                    <p>We want bidirectional transfer of control and state</p>
+                    <p>Emscripten provides API for JavaScript <-> C++ interop</p>
+                </section>
+				<section>
+                    <h2>Call DOM API from C++</h2>
+                    <p>Using API from val.h</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+using emscripten::val;
+val document = val::global("document");
+val input =
+  document.call&lt;val&gt;("createElement", std::string("input"));
+val body = document["body"];
+body.call&lt;void&gt;("appendChild", input);
+                </code></pre>                    
+                </section>
+                <section>
+                    <h2>Calling C++ API from JavaScript</h2>
+                    <p>Export C++ API to JavaScript</p>
+                	<pre><code class="hljs" data-trim contenteditable>
+                #include &lt;emscripten/bind.h&gt;
+                
+                void setColor(int r, int g, int b, int colorSpaceIndex);
+                
+                EMSCRIPTEN_BINDINGS(colorDebugger) {
+                    emscripten::function("setColor", &setColor);
+                }
+                </code></pre>
+                    <p>Make call from JavaScript </p>
+                    <pre><code class="hljs" data-trim contenteditable>
+                        Module.setColor(rgb[0], rgb[1], rgb[2], colorSpaceIndex);
+                    </code></pre>                    
+                </section>
+                
+                <section>
+                <iframe width="1000" height="900" src = "qt/colordebugger/examples/web/index-minimal.html"></iframe>    
+                </section>
+
+                <section>
+                <img width=150 height=75 src="images/qtlogo.svg">
+                <h1>Thanks!</h1>
+                github.com/msorvig/QtWS18
+                </section>
+
+			</div>
+		</div>
+
+		<script src="reveal.js/lib/js/head.min.js"></script>
+		<script src="reveal.js/js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+                history: true,
+                slideNumber: true,
+                viewDistance: 3,
+				dependencies: [
+					{ src: 'reveal.js/plugin/markdown/marked.js' },
+					{ src: 'reveal.js/plugin/markdown/markdown.js' },
+					{ src: 'reveal.js/plugin/notes/notes.js', async: true },
+					{ src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
