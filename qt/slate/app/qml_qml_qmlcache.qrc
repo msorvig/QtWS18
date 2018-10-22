@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<RCC>
+    <qresource prefix="/qml">
+        <file alias="ui/qmldir">../../../qt-webassembly-examples/slate/app/qml/ui/qmldir</file>
+    </qresource>
+</RCC>
