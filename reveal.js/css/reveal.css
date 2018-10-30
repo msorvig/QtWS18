@@ -356,10 +356,10 @@ body {
     visibility: hidden; }
   .reveal .controls .enabled {
     visibility: visible;
-    opacity: 0.9;
+    opacity: 0.3;
     cursor: pointer;
-    -webkit-transform: none;
-            transform: none; }
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5); }
   .reveal .controls .enabled.fragmented {
     opacity: 0.5; }
   .reveal .controls .enabled:hover,

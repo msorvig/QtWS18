@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Qt for Wasm</title>
 
 		<link rel="stylesheet" href="reveal.js/css/reveal.css">
 		<link rel="stylesheet" href="reveal.js/css/theme/white.css">
@@ -25,21 +25,298 @@
 		<div class="reveal">
 			<div class="slides">
 				<section>
-                    <h2>Presentation Tech test</h2>
+                    <img width=150 height=75 src="images/qtlogo.svg">
+                    <h2>Qt for WebAssembly</h2>
+                    <img width=300 height=300 src="images/qtws18.png">
+                    <p>morten.sorvig@qt.io <p/>
+                </section>
+                <section>
+                    <h2>Qt for WebAssembly</h2>
+                    <iframe width="300" height="300" src = "qt/gui_opengl/gui_opengl.html"></iframe>    
+                    <iframe width="300" height="300" src = "qt/widgets_wiggly/widgets_wiggly.html"></iframe>    
+                    <iframe width="600" height="300" src = "qt/quick_clocks/quick_clocks.html"></iframe>  
+                </section>
+                <section>
+                    <h2>Agenda</h2>
+                    <p>Qt for Web Browsers</p>
+                    <p>Introduction to WebAssembly and Emscripten</p>
+                    <p>Building for WebAssembly</p>
+                    <p>Qt applications as a &lt;canvas&gt;</p>
+                    <p>Local File Access</p>
+                    <p>Networking</p>
+                    <p>JavaScript and C++ Interop</p>
+                </section>
+                <section>
+                    <h2>Qt for Web Browsers</h2>
+                    <p>(The story so far)</p>
+                    <p><strike>Qt for Google Native Client</strike></p>
+                    <p>Qt WebGL Streaming</p>
+                    <p>Qt for WebAssembly</p>
+                </section>
+                <section>
+                    <h2><i>Why</i> Qt for Web Browsers</h2>
+                    <p>Build once, deploy everywhere</p>
+                    <p>No installation required</p>
+                    <p>Security through sandboxing</p>
+                </section>
+                <section>
+                    <h2>Platform Stack</h2>
+                    <img src="images/qtstack.svg" style="display:block;margin:0 auto;">
+                </section>
+                <section>
+                    <h2>WebAssembly</h2>
+                    <iframe width="1000" height="600" src="https://webassembly.org"></iframe>
+                </section>
+                <section>
+                    <h2>Emscripten</h2>
+                    <iframe width="1000" height="600" src="http://kripken.github.io/emscripten-site/"></iframe>
+                </section>
+                <section>
+                    <h2>Qt</h2>
+                    <p>New platform for 5.12: Q_OS_WASM</p>
+                    <p>Tech Preview</p>
+                    <p>License: GPLv3 and Commercial</p>
+                    <p>Host system support: GNU/Linux, macOS, Windows Subsystem for Linux</p>
+                </section>
+                <section>
+                        <h2>Build Qt from source</p>
+                        <img width=650 src="images/qtmaintenancetoolsources.png">
+                </section>
+                <section>
+                        <h2>Build Qt from source</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+$ ~/Qt/5.12.0/Src/configure -xplatform wasm-emscripten
+$ make</code></pre>
+                        <p>Implicit configure flags: -static -no-feature-thread</p>
+                        <p>Suppored Modules: QtBase, QtDeclarative, QQuickControls2, QtCharts, QtWebSockets, ++</p>
+                        <p>Not Supported: QtMultimedia, QtWebEngine</p>
+                </section>
+                <section>
+                    <h2>The fine print</h2>
+                    <p>No system cliboard support</p>
+                    <p>No virtual keyboard support on mobile</p>
+                    <p>No nested event loop support (QEventLoop::exec())</p>
+                    <p>No system font support (bring your own fonts)</p>
+                    <p>No accessibility/screen reader support</p>
+                    <p></p>
+                </section>
+                <section>
+                    <h2>Tentative Roadmap (5.13)</h2>
+                    <p>System cliboard integration</p>
+                    <p>Virtual keyboard support</p>
+                    <p>Shared library builds</p>
+                    <p>Multithreading</p>
+                    <p></p>
+                    <p></p>
+                </section>
+                <section>
+                    <h2>Build Application</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+$ /path/to/qt-wasm/qtbase/bin/qmake
+$ make</code></pre>
+                    <p>Will produce .wasm, .js and .html files</p>
+                    <p>These can be served from any web server</p>
+                </section>
+                <section>
+                    <h2>Build Output Files</h2>
+                    <table>
+				    <thead>
+						<tr>
+							<th>Name</th>
+							<th>Source</th>
+                            <th>Purpose</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr style>
+							<td>app.html</td>
+							<td>Qt</td>
+							<td>HTML container</td>
+						</tr>
+						<tr>
+							<td>qtloader.js</td>
+							<td>Qt</td>
+                            <td>JS API for loading Qt apps</td>
+						</tr>
+						<tr>
+							<td>app.js</td>
+                            <td>emscripten</td>
+							<td>app runtime and JS API</td>
+						</tr>
+						<tr>
+							<td>app.wasm</td>
+                            <td>emscripten</td>
+							<td>app binary</td>
+						</tr>
+					</tbody>
+				    </table>
+                </section>
+                <section>
+                    <h2>Wasm Binary Size</h2>
+                    <p>(compressed)</p>
+    				<table>
+    				    <thead>
+    						<tr>
+    							<th>Modules</th>
+    							<th>gzip</th>
+                                <th>brotli</th>
+    						</tr>
+    					</thead>
+    					<tbody>
+    						<tr>
+    							<td>Core Gui</td>
+    							<td>2.8MB</td>
+                                <td>2.1MB</td>
+    						</tr>
+    						<tr>
+    							<td>Core Gui Widgets</td>
+    							<td>4.3MB</td>
+                                <td>3.2MB</td>
+    						</tr>
+    						<tr>
+    							<td>Core Gui Widgets Quick Charts</td>
+    							<td>8.6MB</td>
+    							<td>6.3MB</td>
+    						</tr>
+    					</tbody>
+                    </table>
+				</section>
+                <section>
+                    <h2>Application as &lt;canvas&gt;</h2>
+                    <p> The application is embedded in the html page as a canvas element</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+&lt;div&gt;
+    &lt;canvas&gt;
+        &lt;!--- App Appears Here --&gt;
+    &lt;/canvas&gt;
+&lt;/div&gt;</code></pre>
+                    <p>The html file controls cavas position and size<p/>
+                    <p>The application sees a QScreen with geometry matching that of the canvas<p/>
+                </section>
+                <section>
+                    <h2>Demo: Slate</h2>
+                    <img src="images/slate-icon-web.svg" style="display:block;margin:0 auto;">
+                    <a href="https://github.com/mitchcurtis/slate" target="_blank">Slate - Pixel Art Editor</a>
+                    <p>Image editor made with Qt Quick Controls 2<p/>
+                </section>
+                <section>
+                    <iframe width="900" height="600" src = "qt/slate/app/slate.html"></iframe>
+                    <br><small><small>Also, <a href=qt/slate/app/slate.html target="_blank">full viewport</a></small></small></br>
+                </section>
+
+                <section>
+                    <h2>Local File Access</h2>
+                        <p>Sandbox prevents direct file system access</p>
+                        <p>Emscripten creates an in-memory file system, accessible by QFile</p>
+                        <p>HTML has API for opening a file dialog, and starting a file download<p>
+                        <p>Not Compatible with QFileDialog - New API is needed<p>
+                        <p><p>
+                </section>
+                <section>
+                    <h2>Local File Access</h2>
+                    <p>Callback-based loadFile()</p>
+					<pre><code class="hljs" data-trim contenteditable>
+QWasmFile::loadFile("*.txt",
+    [](const QByteArray &fileContent,
+       const QString &fileName) {
+
+       qDebug() << "Got" << fileContent.count()
+                << "bytes from" << fileName;
+});
+</code></pre>                    
+                    <p>Fire-and-forget saveFile()</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+QByteArray content = ...;
+QString fileNameHint = ...;
+QWasmFile::saveFile(content, fileNameHint);
+                    </code></pre>                    
+                </section>
+                <section>
+                    <iframe width="900" height="600" src = "qt/slate/app/slate.html"></iframe>
+                </section>
+
+                <section>
+                    <h2>Networking</h2>
+    				<table>
+    				    <thead>
+    						<tr>
+    							<th>API</th>
+    							<th>Protocol</th>
+                                <th>Notes</th>
+    						</tr>
+    					</thead>
+    					<tbody>
+    						<tr>
+    							<td>QNetworkAccessManager</td>
+    							<td>Http</td>
+                                <td>Same Origin</td>
+    						</tr>
+    						<tr>
+    							<td>QWebSocket</td>
+    							<td>WebSocket</td>
+                                <td>Any host</td>
+    						</tr>
+    						<tr>
+    							<td>QAbstractSocket</td>
+    							<td>WebSocket</td>
+                                <td>Websockify forwarding host</td>
+    						</tr>
+    					</tbody>
+    				    </table>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>MQTT over WebSocket</h2>
+                    <iframe width="700" height="600" src="qt/mqtt_simpleclient/mqtt_simpleclient.html"></iframe>    
+                </section>
+
+                <section>
+                    <h2>JavaScript and C++ Interop</h2>
+                    <p>Use case: The applicaiton is a web page component</p>
+                    <p>We want bidirectional transfer of control and state</p>
+                    <p>Emscripten provides API for JavaScript <-> C++ interop</p>
                 </section>
 				<section>
-				    <h2>A Slide</h2>
-                    <iframe width="300" height="300" src="qt/gui_opengl/gui_opengl.html"></iframe>    
-                    <iframe width="300" height="300" src="qt/widgets_wiggly/widgets_wiggly.html"></iframe>    
-                    <iframe width="600" height="300" src="qt/quick_clocks/quick_clocks.html"></iframe>    
-				</section>
-				<section>
-				    <h2>Another Slide</h2>
-                    <iframe width="1000" height="500"  src="qt/slate/app/slate.html"></iframe>
-				</section>
-				<section>
-				    <h2>Fin</h2>
-				</section>
+                    <h2>Call DOM API from C++</h2>
+                    <p>Using API from val.h</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+using emscripten::val;
+val document = val::global("document");
+val input =
+  document.call&lt;val&gt;("createElement", std::string("input"));
+val body = document["body"];
+body.call&lt;void&gt;("appendChild", input);
+                </code></pre>                    
+                </section>
+                <section>
+                    <h2>Calling C++ API from JavaScript</h2>
+                    <p>Export C++ API to JavaScript</p>
+                	<pre><code class="hljs" data-trim contenteditable>
+                #include &lt;emscripten/bind.h&gt;
+                
+                void setColor(int r, int g, int b, int colorSpaceIndex);
+                
+                EMSCRIPTEN_BINDINGS(colorDebugger) {
+                    emscripten::function("setColor", &setColor);
+                }
+                </code></pre>
+                    <p>Make call from JavaScript </p>
+                    <pre><code class="hljs" data-trim contenteditable>
+                        Module.setColor(rgb[0], rgb[1], rgb[2], colorSpaceIndex);
+                    </code></pre>                    
+                </section>
+                
+                <section>
+                <iframe width="1000" height="900" src = "qt/colordebugger/examples/web/index-minimal.html"></iframe>    
+                </section>
+
+                <section>
+                <img width=150 height=75 src="images/qtlogo.svg">
+                <h1>Thanks!</h1>
+                github.com/msorvig/QtWS18
+                </section>
+
 			</div>
 		</div>
 
@@ -51,6 +328,9 @@
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
+                history: true,
+                slideNumber: true,
+                viewDistance: 3,
 				dependencies: [
 					{ src: 'reveal.js/plugin/markdown/marked.js' },
 					{ src: 'reveal.js/plugin/markdown/markdown.js' },
