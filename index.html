@@ -75,7 +75,6 @@
                     <h2>Qt</h2>
                     <p>New platform for 5.12: Q_OS_WASM</p>
                     <p>Tech Preview</p>
-                    <p>License: GPLv3 and Commercial</p>
                     <p>Host system support: GNU/Linux, macOS, Windows Subsystem for Linux</p>
                 </section>
                 <section>
@@ -85,10 +84,10 @@
                 <section>
                         <h2>Build Qt from source</h2>
                         <pre><code class="hljs" data-trim contenteditable>
-$ ~/Qt/5.12.0/Src/configure -xplatform wasm-emscripten
-$ make</code></pre>
+$ ~/Qt/5.12.0/Src/configure -xplatform wasm-emscripten -nomake examples
+$ make module-qtbase module-qtdeclarative module-qtquickcontrols2</code></pre>
                         <p>Implicit configure flags: -static -no-feature-thread</p>
-                        <p>Suppored Modules: QtBase, QtDeclarative, QQuickControls2, QtCharts, QtWebSockets, ++</p>
+                        <p>Suppored Modules: QtBase, QtDeclarative, QQuickControls2, QtCharts, QtWebSockets, QtMQTT ++</p>
                         <p>Not Supported: QtMultimedia, QtWebEngine</p>
                 </section>
                 <section>
@@ -98,15 +97,6 @@ $ make</code></pre>
                     <p>No nested event loop support (QEventLoop::exec())</p>
                     <p>No system font support (bring your own fonts)</p>
                     <p>No accessibility/screen reader support</p>
-                    <p></p>
-                </section>
-                <section>
-                    <h2>Tentative Roadmap (5.13)</h2>
-                    <p>System cliboard integration</p>
-                    <p>Virtual keyboard support</p>
-                    <p>Shared library builds</p>
-                    <p>Multithreading</p>
-                    <p></p>
                     <p></p>
                 </section>
                 <section>
@@ -249,7 +239,7 @@ QWasmFile::saveFile(content, fileNameHint);
     						<tr>
     							<td>QNetworkAccessManager</td>
     							<td>Http</td>
-                                <td>Same Origin</td>
+                                <td>Same Origin / CORS host</td>
     						</tr>
     						<tr>
     							<td>QWebSocket</td>
